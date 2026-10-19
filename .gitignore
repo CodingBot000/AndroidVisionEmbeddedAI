@@ -1,0 +1,22 @@
+# Local tooling and generated assets
+.gradle/
+.kotlin/
+**/build/
+local.properties
+.idea/
+.DS_Store
+.venv/
+models/*.tflite
+models/*.tar.bz2
+models/downloads/
+app/libs/*.aar
+app/src/main/assets/models/*
+!app/src/main/assets/models/.gitkeep
+!app/src/main/assets/models/model-manifest.json
+app/src/androidTest/assets/*.pcm
+**/__pycache__/
+*.pyc
+
+# Local project documentation (excluded from GitHub)
+/doc/
+/docs/

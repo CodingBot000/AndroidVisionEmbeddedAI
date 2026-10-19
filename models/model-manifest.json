@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "retrieved_at": "2026-10-17T09:26:40.933774+00:00",
+  "vision": {
+    "id": "efficientdet-lite0-detection-metadata-1",
+    "url": "https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite",
+    "source": "https://github.com/tensorflow/examples/blob/master/lite/examples/object_detection/raspberry_pi/setup.sh",
+    "license": "Apache-2.0 (TensorFlow EfficientDet upstream)",
+    "input": {
+      "shape": [
+        1,
+        320,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "layout": "NHWC RGB",
+      "scale": 0.0078125,
+      "zero_point": 127,
+      "preprocessing": "RGB bytes 0..255; no float normalization; resize entire upright crop to 320x320"
+    },
+    "output": {
+      "dtype": "float32",
+      "order": [
+        "boxes [1,25,4] ymin,xmin,ymax,xmax",
+        "classes [1,25]",
+        "scores [1,25]",
+        "count [1]"
+      ],
+      "flatbuffer_shape": "unspecified before runtime allocation",
+      "postprocess": "TFLite_Detection_PostProcess; NMS already included; no second NMS"
+    },
+    "labels": "embedded labelmap.txt extracted byte-for-byte; 90 COCO slots including ??? gaps; zero-based"
+  },
+  "speech": {
+    "id": "sherpa-onnx-moonshine-tiny-ko-quantized-2026-02-27",
+    "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-moonshine-tiny-ko-quantized-2026-02-27.tar.bz2",
+    "archive_sha256": "d3b6c5390a7859c9ef20ff4f20b0766fcbad1dc06c0f509fe4840a3a302112dc",
+    "license": "Moonshine AI Community License (Korean; NOT MIT)",
+    "sample_rate": 16000,
+    "input": "mono normalized float PCM [-1,1]",
+    "encoder": "encoder_model.ort",
+    "merged_decoder": "decoder_model_merged.ort",
+    "tokens": "tokens.txt",
+    "decoding": "greedy_search, non-streaming Moonshine v2; CPU 2 threads"
+  },
+  "runtime": {
+    "sherpa_version": "1.13.8",
+    "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.8/sherpa-onnx-1.13.8.aar",
+    "path": "app/libs/sherpa-onnx-1.13.8.aar",
+    "size": 50129134,
+    "sha256": "633c24321e06b1fe79feafa03ea16cbc0f8a286641e2da3559bac91bdb13bd96",
+    "upstream_digest": "sha256:633c24321e06b1fe79feafa03ea16cbc0f8a286641e2da3559bac91bdb13bd96",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ]
+  },
+  "files": [
+    {
+      "path": "app/src/main/assets/models/LICENSE",
+      "asset": "LICENSE",
+      "size": 13344,
+      "sha256": "6148d7574a6554b7379b633cfd4c4fe5840c3f548d13bc83e00b52dc6fa00abd"
+    },
+    {
+      "path": "app/src/main/assets/models/decoder_model_merged.ort",
+      "asset": "decoder_model_merged.ort",
+      "size": 58327336,
+      "sha256": "95aa9f2e764b80625d2889d6ec9f05c965808e540ac50c16abd10c7ea33fe44b"
+    },
+    {
+      "path": "app/src/main/assets/models/efficientdet_lite0.tflite",
+      "asset": "efficientdet_lite0.tflite",
+      "size": 4563519,
+      "sha256": "2e04c53bfeac0ac2a30c057c7e2a777594ce39baaac35a92f74fb1e8c4fc4e0b"
+    },
+    {
+      "path": "app/src/main/assets/models/encoder_model.ort",
+      "asset": "encoder_model.ort",
+      "size": 13238176,
+      "sha256": "947260d46252f48eada86a34986b3f70c01d68a343959949a77375b94debd055"
+    },
+    {
+      "path": "app/src/main/assets/models/labels.txt",
+      "asset": "labels.txt",
+      "size": 661,
+      "sha256": "f8803ef7900160c629d570848dfda4175e21667bf7b71f73f8ece4938c9f2bf2"
+    },
+    {
+      "path": "app/src/main/assets/models/tokens.txt",
+      "asset": "tokens.txt",
+      "size": 549350,
+      "sha256": "2870d843e14c1e187bf1913a521562a63b53933814bd7f2145120468f494a049"
+    }
+  ],
+  "host_validation": {
+    "runtime_url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.8/sherpa-onnx-v1.13.8-osx-arm64-shared-no-tts.tar.bz2",
+    "sha256": "91b96512c4fa1960f8a9ed5360a6c8dda53a4b5015d0590244f14086a234557a",
+    "directory": "sherpa-onnx-v1.13.8-osx-arm64-shared-no-tts",
+    "platform": "macOS ARM64; optional validation only, excluded from APK"
+  }
+}
