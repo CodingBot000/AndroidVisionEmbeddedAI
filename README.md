@@ -6,7 +6,7 @@
 
 소스 구현·빌드·단위·모델 호스트·에뮬레이터 검증과 실제 폰 센서 검증을 구분합니다. **실기기는 DEVICE_PENDING**입니다.
 
-개발계획서·상세 검증 로그·스크린샷이 있는 `docs/` 및 `doc/`는 사용자 결정에 따라 로컬에만 보존하며 GitHub 커밋에서 제외합니다. 공개 저장소의 빌드·모델 정보는 이 README, `models/model-manifest.json`, `NOTICE.md`를 기준으로 확인하세요.
+공개 기술 문서와 화면 자료는 [docs 문서 모음](docs/README.md)에서 확인할 수 있습니다. 사용자 결정에 따라 내부 개발계획서·상세 검증 로그·개인 시연 원고가 있는 `docs/_private/`만 Git에서 제외합니다. 빌드·모델 정보는 이 README, `models/model-manifest.json`, `NOTICE.md`를 기준으로 확인하세요.
 
 ## 빌드와 실행
 
@@ -93,4 +93,4 @@ adb devices
 - [한국어 모델 라이선스 원문](LICENSES/MOONSHINE-LICENSE.txt)
 - [Compose 디자인 및 시안 프롬프트](design/IMAGE_PROMPTS.md)
 
-상세 개발 문서는 로컬 전용입니다. 이미지와 음성 원본은 저장·전송하지 않습니다. Room 이벤트에는 시각·유형·대상·score·backend·latency 등 최소 메타데이터만 저장하며 사용자가 삭제할 때까지 로컬 보관합니다. INTERNET 권한과 Android backup/device transfer를 비활성화합니다.
+공개 문서는 `docs/`에, 내부 문서와 원본 로그는 Git에서 제외되는 `docs/_private/`에 구분해 보관합니다. 이미지와 음성 원본은 저장·전송하지 않습니다. Room 이벤트에는 시각·유형·대상·score·backend·latency 등 최소 메타데이터만 저장하며 사용자가 삭제할 때까지 로컬 보관합니다. INTERNET 권한과 Android backup/device transfer를 비활성화합니다.

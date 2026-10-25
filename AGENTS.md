@@ -1,20 +1,72 @@
-# ROBOT VISION 작업 규칙
+# ROBOT VISION 개발·운영 지침
 
-- 최상위 구현 명세: `docs/init/RobotVision_Android_EmbeddedAI_Codex_Development_Plan_KR.md`.
-- 구현 전에 관련 대화·문서·코드·설정을 확인한다. 중요한 미결 정책은 확정하지 않고 선택지와 영향을 사용자에게 묻는다. 문서의 이미 승인된 기본안은 다시 묻지 않는다.
-- Kotlin, Coroutines/Flow, Compose, MVI, Hilt 유지. 단일 :app 모듈의 domain / data / presentation 경계 유지.
-- 실제 엔진을 Fake로 대체하지 않는다. Fixture는 src/debug, Preview, test, androidTest만 허용. Release는 CPU 실엔진만 사용한다.
-- 실기기 부재로 중단하지 않는다. 센서·GPU/NPU·인식률·지연·발열은 DEVICE_TEST_PENDING에 남긴다.
-- 빌드/단위/호스트/에뮬레이터/실기기 검증은 구분한다. 실행하지 않은 검증을 PASS라 하지 않는다.
-- 모델은 manifest SHA-256을 검증하고 빌드 전에 준비한다. 다운로드 URL·계약·라이선스가 바뀌면 모델 manifest와 출처 문서를 함께 갱신한다.
-- Moonshine 한국어 가중치는 MIT가 아니다. `LICENSES/MOONSHINE-LICENSE.txt` 확인. 사용자 대신 상업 라이선스 동의를 선언하지 않는다.
-- 이미지·음성 원본을 저장·전송하지 않는다. INTERNET 권한 추가 금지. 이벤트 메타데이터만 Room에 저장하며 전체 삭제 확인 UI를 유지한다.
-- 모델/오디오는 main thread 밖에서 실행. JNI 생성/호출/종료를 전용 worker로 직렬화. ImageProxy는 finally에서 한 번 닫는다.
-- 코드 변경 후 관련 테스트, assembleDebug/testDebugUnitTest/lintDebug를 실행하고 실제 결과를 TEST_EVIDENCE에 기록한다.
+구현된 Android 앱의 기능 개선, 버그 수정, 리팩터링, 의존성 관리, 검증과 배포 준비에 적용한다.
 
-## GitHub 배포 기준 (2026-10-19 사용자 확정)
+## 1. 변경 작업
 
-- 원격 저장소 이름: `AndroidVisionEmbeddedAI`, 공개 범위: Public.
-- 프로젝트 루트의 `doc/`, `docs/`는 로컬 전용으로 Git에서 제외한다. 문서 원본을 삭제하지 않는다.
-- 모델·AAR·APK·개인 SDK 설정·캐시는 기존 .gitignore 제외 정책을 유지한다. 모델은 manifest와 취득 스크립트로 재현한다.
-- GitHub README는 제외된 문서/스크린샷에 링크하지 않고 빌드·모델·라이선스·검증 경계를 자체 안내한다.
+- 변경 전에 사용자 요청, 관련 코드·설정·기술 문서, Git 상태와 기존 미커밋 변경을 확인한다.
+- 작업 내역은 `docs/_private/README.md`를 읽어 확인하고, 후속 개발에 필요한 변경 내용·결정과 근거·검증 결과·미해결 사항을 같은 파일에 기록한다. 파일이 없는 환경에서는 필요할 때 생성한다.
+- 버그는 재현 조건·호출 경로·사용자 영향을 먼저 확인하고 필요한 범위만 수정한다. 기존 사용자 변경을 덮어쓰거나 무관한 재작성·포맷 변경을 묶지 않는다.
+- 핵심 사용자 흐름, 지원 SDK/ABI, 모델·런타임, 외부 서비스·비용, 데이터 보관·삭제·이관에 관한 중요한 결정이 미정이거나 충돌하면 먼저 확인한다. 코드의 기본값을 승인 정책으로 간주하지 않는다.
+- 이미 승인된 기준은 유지하고 사소한 구현 선택은 스스로 처리한다. 새로운 결정은 관련 설정과 기술 문서에 반영한다.
+- 의미 있는 버그 수정에는 재현 조건을 검증하는 회귀 테스트를 추가·보완한다. 변경 후 diff와 관련 동작을 확인한다.
+
+## 2. 아키텍처·런타임
+
+- Kotlin, Coroutines/Flow, Jetpack Compose, MVI, Dagger Hilt를 유지한다. 단일 `:app`의 domain/data/presentation 경계를 지키고 플랫폼·JNI 세부사항을 순수 domain 모델로 전파하지 않는다.
+- 실제 엔진을 Fake로 대체하지 않는다. Fixture는 `src/debug`, Preview, test, androidTest에서만 사용하고 실제 모드의 실패를 묵시적 Simulation 전환으로 숨기지 않는다.
+- Release는 CPU 실엔진을 기준으로 유지한다. 실제 backend와 fallback 이유를 표시하며 GPU/NPU 지원·속도·정확도를 검증 없이 주장하지 않는다.
+- 모델 로딩·추론·blocking I/O는 main thread 밖에서 처리한다. thread affinity가 필요한 native 핸들은 생성·호출·종료를 같은 전용 worker에서 직렬화한다.
+- 카메라·오디오·모델의 소유자와 Lifecycle 종료 경로를 유지한다. 실행 중인 핸들을 먼저 해제하거나 취소된 작업의 결과로 새 세션을 덮어쓰지 않는다.
+- ImageProxy는 성공·오류·취소를 포함해 정확히 한 번 닫는다. Bitmap·AudioRecord·native stream·TensorBuffer·executor의 해제 순서를 변경할 때 경합과 실패 경로를 확인한다.
+- 모델 입출력 타입·형상·라벨·버퍼 용량을 실제 파일 계약에 맞춘다. native run/warm-up 전에 용량을 검사하고 native 메모리 오류를 사후 예외 처리로 복구할 수 있다고 가정하지 않는다.
+- 검색·음성 오류 시 복구 경로를 제공하고, 개별 작업 실패가 이후 사용자 명령 처리를 중단시키지 않도록 한다.
+
+## 3. 데이터·모델·의존성
+
+- 이미지·음성 원본을 저장·전송하지 않는다. INTERNET 권한을 추가하지 않으며 전이 의존성이 merged/binary Manifest에 추가하는 권한도 확인한다.
+- Room에는 최소 이벤트 메타데이터만 저장하고 전체 삭제 확인 UI를 유지한다. 자동 삭제·보관 한도·destructive migration·데이터 이관은 승인된 기준 없이 도입하지 않는다.
+- Room schema 변경 시 version·export된 schema·migration·기존 데이터 보존을 함께 검토한다. DataStore 설정 변경 시 기존 값과의 호환성과 읽기/쓰기 실패를 확인한다.
+- 모델 파일은 manifest의 SHA-256으로 검증한다. 모델 교체 시 출처·버전·파일 크기·입출력 계약·라벨·로딩 방식·라이선스와 관련 기술 문서를 함께 갱신한다.
+- Moonshine 한국어 가중치는 MIT가 아니다. `LICENSES/MOONSHINE-LICENSE.txt`와 NOTICE를 유지하고 사용자 대신 상업 라이선스 동의를 선언하지 않는다.
+- 의존성은 고정 버전을 사용한다. 업데이트 시 실제 API와 AGP/Kotlin/KSP/Hilt·SDK/JDK·JNI ABI 호환성을 확인하고 관련 회귀 검증을 수행한다.
+
+## 4. 검증·장애 대응
+
+코드 변경 후 관련 테스트와 다음 기본 명령을 실행한다.
+
+```bash
+./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
+
+- 모델 자산·취득/검증 도구 변경 시 `python3 tools/verify_models.py`와 해당 도구 검증을 추가한다. 자산이 없으면 준비 절차와 라이선스 조건을 확인하고 다른 모델이나 Fake로 통과시키지 않는다.
+- R8·JNI·Manifest·모델/의존성·패키징·서명 변경 시 `:app:assembleRelease`와 관련 APK/런타임 검증을 추가한다. keep/dontwarn 규칙은 근거와 회귀 확인 없이 제거하거나 확대하지 않는다.
+- 에뮬레이터/기기가 준비된 경우 관련 instrumented/UI/native 테스트를 수행한다. 실제 대상과 API/ABI를 확인하고 테스트용 입력을 production APK에 포함하지 않는다.
+- 기술 문서·지침만 변경한 경우 경로·링크·명령·정책 일관성과 Git 제외 상태를 검증한다. 앱 소스에 영향이 없으면 Gradle 재실행은 생략할 수 있다.
+- 코드·빌드 오류는 수정 후 관련 검증을 다시 실행한다. 환경 오류와 코드 결함을 구분하고 미해결 항목에 원인·시도·남은 범위를 기록한다.
+- 실기기 부재로 수정·리뷰를 중단하지 않는다. 가능한 자동 검증을 마치고 센서·가속기·인식률·latency·발열·장시간 검증은 DEVICE_PENDING으로 남긴다.
+- 검증 기록에 실행 날짜·명령·대상 소스/variant·환경·결과를 남긴다. PASS, FAIL, NOT_RUN, CACHED/UP-TO-DATE, DEVICE_PENDING을 구분하고 캐시 재사용을 새 테스트 실행으로 표시하지 않는다.
+- 빌드·단위·호스트 모델·에뮬레이터·실기기 결과를 구분한다. 과거 결과를 현재 변경의 검증으로 승격하거나 Fake 표본을 실제 성능 통계에 합치지 않는다.
+- 관련 검증이 통과하면 신규 변경·실패·미해결 우려가 없는 한 불필요하게 반복하지 않는다.
+
+## 5. Code Review Rules
+
+- 리뷰 시작 전 `REVIEW.md`를 읽고 적용한다. 전체 소스·미커밋 변경·브랜치 대비 변경·특정 커밋 중 범위와 기준을 명시한다.
+- 확정 결함·권장 개선·확인 필요를 구분하고 파일/라인·발생 조건·영향·근거·수정 방향·검증 방법을 기록한다.
+- 리뷰 요청만으로 소스를 수정하거나 커밋·푸시하지 않는다. 수정이 요청되면 해당 범위에서 변경과 재검증을 수행한다.
+- 실기기 미검증 자체를 확정 결함으로 취급하지 않는다.
+
+## 6. 기술 문서
+
+- 설치·실행·지원 범위는 `README.md`, 리뷰 기준은 `REVIEW.md`, 모델 계약·고지는 `models/model-manifest.json`, `LICENSES/`, `NOTICE.md`를 확인한다.
+- 공개 아키텍처·모델 근거·검증 요약·지원 한계·화면 자료는 `docs/`에 유지한다. 동작이나 검증 범위가 바뀌면 관련 기술 문서를 함께 갱신한다.
+- 공개 검증 요약은 `docs/TEST_EVIDENCE.md`에 실행 날짜와 범위를 구분해 반영한다. 로컬 경로·기기 식별자·인증 정보·내부 자료 링크를 공개 문서에 노출하지 않는다.
+
+## 7. Git·배포
+
+- 원격 저장소는 `CodingBot000/AndroidVisionEmbeddedAI`, 공개 범위는 Public이다. 변경 전에 branch·remote·작업 트리를 확인하고 원격·공개 범위를 임의 변경하지 않는다.
+- 커밋 전 `.gitignore`와 staged 목록을 확인하고 제외 대상이나 민감한 파일을 강제로 추가하지 않는다.
+- 모델·AAR·APK·개인 SDK 설정·캐시·서명 키를 Git에 포함하지 않는다. 모델은 manifest와 취득 스크립트로 재현한다.
+- 공개 README는 저장소에서 접근 가능한 기술 문서·화면 자료에만 링크하고 빌드·모델·라이선스·검증 경계를 안내한다.
+- 커밋·푸시·PR 생성·배포는 사용자 요청이나 유효한 승인 범위에서 수행한다. 무관한 미커밋 변경을 포함하거나 기록을 재작성·강제 푸시하지 않는다.
+- APK 전달·배포 시 variant·버전·모델/ABI·검증 결과·서명 상태를 구분한다. unsigned Release나 로컬 테스트 키 사본을 production 서명 완료로 표시하지 않는다.

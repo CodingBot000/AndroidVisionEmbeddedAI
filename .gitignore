@@ -17,6 +17,5 @@ app/src/androidTest/assets/*.pcm
 **/__pycache__/
 *.pyc
 
-# Local project documentation (excluded from GitHub)
-/doc/
-/docs/
+# Private project documentation; other docs remain trackable.
+/docs/_private/
