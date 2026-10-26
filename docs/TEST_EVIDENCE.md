@@ -126,3 +126,5 @@ python3 tools/fetch_models.py --runtime-only
 | Android instrumented·실제 추론·실기기 테스트 | NOT_RUN | 이 변경에서 재실행하지 않음 |
 
 로컬 검증은 GitHub Ubuntu 실행 결과가 아니다. [Android CI 실행 이력](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml)에서 해당 커밋의 실제 결과를 확인한다. [CI 안내](CI.md)에 자동 실행 조건·보고서 위치·모델 라이선스·검증 한계를 기록했다. 모델 가중치가 없는 CI APK는 배포하지 않는다.
+
+첫 [GitHub push 실행](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/runs/40339961014)은 SDK 준비 단계에서 `sdkmanager: command not found`로 실패했으며 빌드·테스트는 실행되지 않았다. 호스팅 환경의 사전 설치를 가정한 부분을 제거하고 `android-actions/setup-android`로 SDK 설치·환경 변수를 명시적으로 준비하도록 수정했다. 이 실패 기록을 테스트 통과로 표기하지 않는다.

@@ -16,6 +16,8 @@
 
 Ubuntu 24.04의 새 작업 디렉터리에서 Temurin JDK 21, 프로젝트 Gradle 8.13 wrapper, Android SDK 36와 Build Tools 35.0.0을 사용한다. Actions는 커밋 SHA로 고정하고 토큰 권한은 `contents: read`로 제한한다. 별도의 인증 키·서명 키·저장소 secret은 필요하지 않다.
 
+`android-actions/setup-android`가 Android SDK command-line tools 설치와 PATH·SDK 환경 변수·SDK 라이선스 준비를 수행하고 필요한 패키지를 설치한다. 호스팅 이미지에 `sdkmanager`가 미리 준비되어 있다고 가정하지 않는다.
+
 1. 자산 취득 도구의 Python 회귀 테스트 8개를 실행한다. 모델 동의 없이 전체 취득이 진행되지 않는지, runtime-only 경로가 모델을 요청하지 않는지, 크기·해시·JNI ABI 오류를 거부하는지 확인한다.
 2. manifest에 고정된 **실제 sherpa-onnx 1.13.8 AAR**를 취득하고 크기·SHA-256·arm64-v8a/x86_64 JNI 항목을 검사한다.
 3. 다음 명령으로 Debug APK 빌드·기존 JVM 테스트 55개·Android Lint를 실행한다. 실패한 태스크가 있어도 독립적인 태스크는 계속 시도하며 최종 결과는 실패로 유지한다.
@@ -48,4 +50,5 @@ Gradle 의존성 캐시를 재사용하지만 빌드 결과 캐시는 비활성�
 
 - [GitHub: Gradle 빌드와 테스트](https://docs.github.com/en/actions/tutorials/build-and-test-code/java-with-gradle)
 - [공식 setup-java 설정](https://github.com/actions/setup-java/tree/v6.1.0)
+- [setup-android의 SDK 설치 설정](https://github.com/android-actions/setup-android/tree/v4.0.4)
 - [GitHub Ubuntu 24.04 실행 환경](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
