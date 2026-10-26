@@ -20,7 +20,13 @@ def download(url,path,expected):
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  p.add_argument('--accept-moonshine-license',action='store_true',help='Confirm review of LICENSES/MOONSHINE-LICENSE.txt for your intended use')
+ p.add_argument('--runtime-only',action='store_true',help='Acquire only the real sherpa AAR for build/JVM checks; no model weights or license acceptance')
  args=p.parse_args()
+ if args.runtime_only:
+  runtime=M['runtime'];download(runtime['url'],ROOT/runtime['path'],runtime['sha256'])
+  import verify_models
+  verify_models.verify(runtime_only=True)
+  return
  if not args.accept_moonshine_license:
   p.error('Read LICENSES/MOONSHINE-LICENSE.txt; Korean weights use Community License. Then pass --accept-moonshine-license.')
  assets=ROOT/'app/src/main/assets/models';assets.mkdir(parents=True,exist_ok=True)

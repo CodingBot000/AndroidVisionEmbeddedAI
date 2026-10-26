@@ -13,6 +13,7 @@ Kotlin·Compose·MVI·Hilt 기반 Android 앱에 카메라 객체 탐지와 한�
 | 3 | [검증 범위와 결과](TEST_EVIDENCE.md) | 단위·UI·실제 엔진 검증의 분리, Release 문제 해결, 실측과 미검증의 구분 |
 | 4 | [화면 자료와 설명](screenshots/README.md) | Compose HUD, 상태·오류 표현, 명시적 시뮬레이션 모드 |
 | 5 | [알려진 한계](KNOWN_LIMITATIONS.md) | 지원 범위, 성능 지표의 정의, 남은 기술적 제한과 후속 검증 |
+| 6 | [CI 자동 검증](CI.md) | push·PR 검증, 새 환경의 실제 AAR 취득·무결성 검사, 모델 라이선스와 실행 검증의 경계 |
 
 이력서에서는 아키텍처와 검증 요약을 중심으로 연결하고, 모델 출처와 한계 문서를 기술 질문의 근거로 사용하는 구성을 권장한다.
 

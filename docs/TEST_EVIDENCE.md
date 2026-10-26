@@ -1,6 +1,6 @@
 # 검증 범위와 결과
 
-이 문서는 **2026-10-17에 수행한 검증 기록**을 외부 독자를 위해 요약한 것이다. 2026-10-25 문서 분류 시 원본의 결과·테스트 수·미검증 범위를 대조했다. 문서를 정리한 날짜를 앱 검증 날짜로 해석하면 안 된다.
+이 문서의 개발 검증 표는 **2026-10-17에 수행한 검증 기록**을 외부 독자를 위해 요약한 것이다. 2026-10-25 문서 분류 시 원본의 결과·테스트 수·미검증 범위를 대조했다. 이후 검증은 아래 날짜별 절에서 구분하며 문서를 정리한 날짜를 앱 검증 날짜로 해석하면 안 된다.
 
 원본 실행 로그에는 로컬 사용자 경로·기기 실행 식별자·개발 중 실패 이력이 혼재하므로 별도 로컬 보관한다. 이 공개 후보에는 검증 범위, 관련 소스, 재현 방법과 기술적으로 의미 있는 수정 사항을 남긴다.
 
@@ -104,3 +104,25 @@ adb devices
 이번 변경은 문서 분류·이동과 host 검증 도구의 로그 저장 경로 조정이다. Android 앱 구현은 변경하지 않았다. Python 구문 검사, 문서 링크, 원본 파일 SHA-256 보존, 공개 후보의 로컬 사용자 경로와 내부 문서 링크, Git 제외 상태를 확인했다.
 
 `./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --offline --no-watch-fs` 호출은 성공했다. assembleDebug와 testDebugUnitTest는 UP-TO-DATE로 기존 결과를 재사용했고, Lint 분석은 실행됐다. 이를 55개 단위 테스트의 신규 실행이나 실제 모델·실기기 인식 재검증으로 표기하지 않는다.
+
+## CI 구성의 로컬 검증 — 2026-10-26
+
+기존 빌드 출력·개인 SDK 설정·모델 가중치가 없는 별도 소스 디렉터리에서 실제 sherpa AAR를 새로 취득하고 크기·SHA-256·JNI ABI를 검증했다. macOS ARM64 / OpenJDK 21.0.10 / SDK 36 / Gradle 8.13에서 다음 명령을 실행했다.
+
+```bash
+python3 tools/fetch_models.py --runtime-only
+./gradlew --no-daemon --stacktrace --console=plain --no-build-cache --continue \
+  :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
+
+| 검증 | 결과 | 범위 |
+|---|---|---|
+| 새 디렉터리의 Debug 빌드·JVM 테스트·Lint | PASS, 65개 태스크 직접 실행 | 41초, 기존 빌드 출력/빌드 결과 캐시 미사용 |
+| JVM 테스트 | 55개 통과, 실패·오류·건너뜀 0 | JUnit XML 확인. 과거 결과 재사용 아님 |
+| Android Lint | 오류 0, 경고 37 | 경고가 없는 상태로 표기하지 않음 |
+| 자산 취득 도구 회귀 테스트 | 8개 통과 | runtime-only 취득, 모델 라이선스 확인 경계, 크기·해시·JNI ABI 오류 거부 |
+| 워크플로 정적 검사 | actionlint 1.7.12 통과 | GitHub 호스팅 환경의 실행 결과와 구분 |
+| 기존 전체 모델 검증 | PASS | 로컬에 준비된 모델 6개 자산과 AAR의 기존 계약 유지 확인 |
+| Android instrumented·실제 추론·실기기 테스트 | NOT_RUN | 이 변경에서 재실행하지 않음 |
+
+로컬 검증은 GitHub Ubuntu 실행 결과가 아니다. [Android CI 실행 이력](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml)에서 해당 커밋의 실제 결과를 확인한다. [CI 안내](CI.md)에 자동 실행 조건·보고서 위치·모델 라이선스·검증 한계를 기록했다. 모델 가중치가 없는 CI APK는 배포하지 않는다.

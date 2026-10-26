@@ -1,5 +1,7 @@
 # ROBOT VISION
 
+[![Android CI](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml/badge.svg?branch=main)](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml)
+
 **Offline Perception Console · Powered by Moonshine AI**
 
 한국어 음성 명령과 후면 카메라 객체 탐지를 연결하는 Android 온디바이스 AI 앱입니다. 서버·API 키·클라우드 음성 API를 사용하지 않습니다. Kotlin, Coroutines/Flow, Jetpack Compose, MVI, Dagger Hilt, CameraX, LiteRT/MediaPipe Tasks, sherpa-onnx, Room, DataStore로 구현했습니다.
@@ -68,9 +70,11 @@ adb devices
 
 `connectedDebugAndroidTest`는 에뮬레이터/기기가 있을 때만 실행합니다. 실제 마이크나 카메라가 없어도 Compose UI·공식 음성 파일·native black-image 추론 검증은 가능합니다.
 
+GitHub Actions는 `main` push와 `main` 대상 PR에서 Debug 빌드·55개 JVM 테스트·Android Lint를 자동 실행합니다. 모델 가중치 없이 실제 sherpa AAR만 취득하며, APK는 배포하지 않습니다. 실행·보고서 확인 방법과 검증 범위는 [CI 안내](docs/CI.md)를 참고하세요.
+
 ## 검증 상태
 
-2026-10-17 개발 검증 결과입니다. 이번 Git 설정·커밋 작업에서 앱 테스트를 새로 실행한 결과는 아닙니다.
+아래 표는 2026-10-17 개발 검증 결과입니다. 2026-10-26 CI 구성 검증은 [날짜별 검증 기록](docs/TEST_EVIDENCE.md), 최신 자동 실행 결과는 [GitHub Actions](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml)에서 확인합니다.
 
 | 항목 | 기록된 결과 |
 |---|---|
