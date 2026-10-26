@@ -128,3 +128,20 @@ python3 tools/fetch_models.py --runtime-only
 로컬 검증은 GitHub Ubuntu 실행 결과가 아니다. [Android CI 실행 이력](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/workflows/android-ci.yml)에서 해당 커밋의 실제 결과를 확인한다. [CI 안내](CI.md)에 자동 실행 조건·보고서 위치·모델 라이선스·검증 한계를 기록했다. 모델 가중치가 없는 CI APK는 배포하지 않는다.
 
 첫 [GitHub push 실행](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/runs/40339961014)은 SDK 준비 단계에서 `sdkmanager: command not found`로 실패했으며 빌드·테스트는 실행되지 않았다. 호스팅 환경의 사전 설치를 가정한 부분을 제거하고 `android-actions/setup-android`로 SDK 설치·환경 변수를 명시적으로 준비하도록 수정했다. 이 실패 기록을 테스트 통과로 표기하지 않는다.
+
+## GitHub 자동 실행 검증 — 2026-10-26
+
+SDK 초기화 수정 커밋 `bd5a863`의 [push run 40340224463](https://github.com/CodingBot000/AndroidVisionEmbeddedAI/actions/runs/40340224463)이 **성공**했다. Ubuntu 24.04 / Temurin 21.0.12 / Android SDK 36 환경이며 로컬 결과와 별도로 확인했다.
+
+| 항목 | 실제 결과 |
+|---|---|
+| push 자동 트리거·SDK 준비·실제 AAR 검증 | PASS |
+| 자산 취득 도구 회귀 테스트 | 8개 통과 |
+| Debug 빌드·JVM 테스트·Lint | BUILD SUCCESSFUL, 65개 태스크 직접 실행 |
+| JVM JUnit XML | 55개 통과, 실패·오류·건너뜀 0 |
+| Lint XML | 오류 0, 경고 38 |
+| 보고서 업로드·다운로드 검증 | `android-ci-reports`에서 JUnit·Lint XML을 내려받아 결과 대조 |
+
+GitHub 환경은 로컬의 경고 37개에 `OldTargetApi` 1개가 추가됐다. CI 경고를 숨기거나 승인된 compile/target SDK 36을 이 작업에서 변경하지 않았다. Gradle 단계는 5분 3초, 전체 job은 5분 40초였으며 이 시간은 빌드 시간으로 앱 추론 latency가 아니다.
+
+`main` push의 실제 실행을 확인했고 PR 이벤트 설정은 워크플로 정적 검사로 확인했다. 검증용 PR을 별도로 생성하지 않았다. 이 run은 모델 가중치·Android instrumented·실제 추론·Release·실기기 검증을 포함하지 않는다.
