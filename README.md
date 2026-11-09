@@ -30,7 +30,7 @@ python3 tools/verify_models.py
 - Release APK: `app/build/outputs/apk/release/app-release-unsigned.apk` (`dev.robotvision`, 배포 서명은 사용자 키로 수행)
 - minSdk 26 / compileSdk·targetSdk 36, arm64-v8a 및 x86_64 JNI 패키징.
 - 모델과 AAR 대용량 바이너리는 Git 제외. 위 스크립트가 고정 SHA-256으로 재취득합니다. 이미 준비된 파일은 확인 후 재사용합니다.
-- 번들 모델 약 73 MiB 외에 양쪽 ABI의 native runtime이 포함되어 APK가 큽니다. 앱 첫 엔진 로딩 시 private model 사본 설치 공간도 필요합니다.
+- 번들 모델 약 80 MiB 외에 양쪽 ABI의 native runtime이 포함되어 APK가 큽니다. 앱 첫 엔진 로딩 시 private model 사본 설치 공간도 필요합니다.
 
 ## 사용 흐름
 
@@ -44,7 +44,7 @@ python3 tools/verify_models.py
 
 ## 실제 엔진과 모델
 
-- Vision: **EfficientDet-Lite0 detection metadata v1**, uint8 RGB 320×320, COCO 80개 유효 클래스/90 index 슬롯. LiteRT **2.3.0 CompiledModel CPU** 우선. native 초기화 후 **추론 전 버퍼 용량 검사**를 수행하며, 용량·출력 계약 실패 시 동일 모델을 **MediaPipe Tasks Vision 0.10.32 CPU**로 실행하고 UI에 실제 backend와 원인을 표시합니다. 에뮬레이터에서 MediaPipe fallback 추론을 확인했습니다.
+- Vision: **EfficientDet-Lite3 detection metadata v1**, uint8 RGB 512×512, COCO 80개 유효 클래스/90 index 슬롯. LiteRT 2.3.0 CPU를 우선 시도하고 입력·출력 버퍼 검증 실패 시 MediaPipe Tasks Vision 0.10.32 CPU로 전환하며 실제 backend와 사유를 표시합니다. Lite3의 실기기 정확도·속도는 미검증입니다.
 - STT: **sherpa-onnx 1.13.8 + sherpa-onnx-moonshine-tiny-ko-quantized-2026-02-27**, Moonshine v2 encoder/merged decoder ORT + tokens. AudioRecord 16 kHz mono PCM, CPU 2 threads.
 - GPU/NPU는 미검증으로 선택 UI를 제공하지 않습니다. 실제 가속 지원이나 성능을 주장하지 않습니다.
 - [모델 출처·정확한 입출력·SHA-256](models/model-manifest.json), [NOTICE](NOTICE.md).
@@ -70,7 +70,7 @@ adb devices
 
 `connectedDebugAndroidTest`는 에뮬레이터/기기가 있을 때만 실행합니다. 실제 마이크나 카메라가 없어도 Compose UI·공식 음성 파일·native black-image 추론 검증은 가능합니다.
 
-GitHub Actions는 `main` push와 `main` 대상 PR에서 Debug 빌드·55개 JVM 테스트·Android Lint를 자동 실행합니다. 모델 가중치 없이 실제 sherpa AAR만 취득하며, APK는 배포하지 않습니다. 실행·보고서 확인 방법과 검증 범위는 [CI 안내](docs/CI.md)를 참고하세요.
+GitHub Actions는 `main` push와 `main` 대상 PR에서 Debug 빌드·JVM 단위 테스트·Android Lint를 자동 실행합니다. 모델 가중치 없이 실제 sherpa AAR만 취득하며, APK는 배포하지 않습니다. 실행·보고서 확인 방법과 검증 범위는 [CI 안내](docs/CI.md)를 참고하세요.
 
 ## 검증 상태
 

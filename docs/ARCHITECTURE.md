@@ -14,7 +14,7 @@ CameraSession → ImageProxy crop / clockwise rotation → VisionController work
 
 ## 프레임 좌표와 수명
 
-CameraX Preview + ImageAnalysis는 하나의 UseCaseGroup/ViewPort와 lifecycle에 바인딩한다. 후면 카메라만 사용, PreviewView FILL_CENTER. 분석 bitmap은 ImageProxy.cropRect 적용 후 rotationDegrees로 회전하며, 도메인 박스는 이 **upright crop**에 대한 normalized 좌표이다. CompiledModel 경로는 전체 crop을 320×320으로 resize하고, 모델의 정규화 좌표를 upright crop 기준으로 해석한다. MediaPipe는 내부 전처리를 사용하고 반환 pixel box를 upright 크기로 나눈다. OverlayCoordinateMapper.fillCenter가 source/view 비율 차이를 보정한다. rotate 함수는 센서 좌표 테스트용이며 이미 회전한 결과에 다시 적용하지 않는다.
+CameraX Preview + ImageAnalysis는 하나의 UseCaseGroup/ViewPort와 lifecycle에 바인딩한다. 후면 카메라만 사용, PreviewView FILL_CENTER. 분석 bitmap은 ImageProxy.cropRect 적용 후 rotationDegrees로 회전하며, 도메인 박스는 이 **upright crop**에 대한 normalized 좌표이다. CompiledModel 경로는 전체 crop을 512×512으로 resize하고, 모델의 정규화 좌표를 upright crop 기준으로 해석한다. MediaPipe는 내부 전처리를 사용하고 반환 pixel box를 upright 크기로 나눈다. OverlayCoordinateMapper.fillCenter가 source/view 비율 차이를 보정한다. rotate 함수는 센서 좌표 테스트용이며 이미 회전한 결과에 다시 적용하지 않는다.
 
 ImageProxy는 analyzer가 동기 소유하고 필요한 Bitmap 처리·추론이 끝난 뒤 finally에서 정확히 한 번 닫는다. runBlocking은 **카메라 전용 executor**에서만 사용하여 native worker 완료까지 proxy 수명을 보존한다. KEEP_ONLY_LATEST는 CameraX 내부의 오래된 프레임을 버리고 Preview 흐름을 유지한다. 800ms 이상 결과가 갱신되지 않으면 overlay를 비운다.
 

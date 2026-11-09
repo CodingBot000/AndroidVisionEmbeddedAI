@@ -1,5 +1,11 @@
 # 검증 범위와 결과
 
+## EfficientDet-Lite3 교체 검증 — 2026-11-09
+
+Lite0을 Lite3 detection metadata v1로 교체했다. macOS ARM64·JDK 21.0.10에서 모델 다운로드·SHA-256·라벨·입력 `[1,512,512,3]`과 출력 계약을 확인하고 TensorFlow Lite 호스트에서 검정 이미지 추론을 실행했다. `:app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleRelease --offline --no-watch-fs`는 성공(120개 중 41개 실행, 79개 UP-TO-DATE)했다. Lite0 입력 버퍼 거부 회귀 테스트 추가 후 JVM 테스트를 다시 실행해 56개 통과했다. Python 자산 도구 테스트 8개와 Debug/unsigned Release APK의 모델 해시·ABI·INTERNET 권한 제외 검사도 통과했다.
+
+Android 16 API 36 ARM64 에뮬레이터에서 실제 native 엔진 테스트 2개가 통과했다. Lite3의 LiteRT 출력 버퍼가 동적 scalar여서 실행 전 용량 검사에서 중단하고 MediaPipe Tasks CPU fallback으로 black-image 추론했다. 한국어 음성 파일 STT도 확인했다. 해당 테스트는 실제 물체 인식률을 입증하지 않는다. 실제 폰 카메라·마이크·속도·발열·인식률 및 Lite3 Release 런타임은 NOT_RUN / DEVICE_PENDING이다. Release APK는 서명되지 않았다. 기존 Lite0 검증 결과는 아래에 과거 기록으로 보존한다.
+
 이 문서의 개발 검증 표는 **2026-10-17에 수행한 검증 기록**을 외부 독자를 위해 요약한 것이다. 2026-10-25 문서 분류 시 원본의 결과·테스트 수·미검증 범위를 대조했다. 이후 검증은 아래 날짜별 절에서 구분하며 문서를 정리한 날짜를 앱 검증 날짜로 해석하면 안 된다.
 
 원본 실행 로그에는 로컬 사용자 경로·기기 실행 식별자·개발 중 실패 이력이 혼재하므로 별도 로컬 보관한다. 이 공개 후보에는 검증 범위, 관련 소스, 재현 방법과 기술적으로 의미 있는 수정 사항을 남긴다.

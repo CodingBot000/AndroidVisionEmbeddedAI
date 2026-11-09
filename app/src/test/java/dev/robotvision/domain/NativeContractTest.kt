@@ -3,8 +3,9 @@ import kotlinx.coroutines.CancellationException
 import org.junit.Assert.*
 import org.junit.Test
 class NativeContractTest {
-    @Test fun staticCapacitiesAccepted() { EfficientDetOutputParser.requireCapacity(307200,listOf(100,25,25,1)) }
-    @Test(expected=IllegalArgumentException::class) fun dynamicScalarOutputsRejectedBeforeInference() { EfficientDetOutputParser.requireCapacity(307200,listOf(1,1,1,1)) }
+    @Test fun staticCapacitiesAccepted() { EfficientDetOutputParser.requireCapacity(786432,listOf(100,25,25,1)) }
+    @Test(expected=IllegalArgumentException::class) fun lite0InputCapacityRejectedForLite3() { EfficientDetOutputParser.requireCapacity(307200,listOf(100,25,25,1)) }
+    @Test(expected=IllegalArgumentException::class) fun dynamicScalarOutputsRejectedBeforeInference() { EfficientDetOutputParser.requireCapacity(786432,listOf(1,1,1,1)) }
     @Test(expected=IllegalArgumentException::class) fun wrongInputCapacityRejected() { EfficientDetOutputParser.requireCapacity(1,listOf(100,25,25,1)) }
     @Test fun outputCoordinatesAndClasses() {
         val d=EfficientDetOutputParser.parse(floatArrayOf(.2f,.1f,.6f,.4f),floatArrayOf(0f),floatArrayOf(.8f),1f,listOf("cup")).single()

@@ -19,7 +19,7 @@ Kotlin·Compose·MVI·Hilt 기반 Android 앱에 카메라 객체 탐지와 한�
 
 ## 구현과 검증의 경계
 
-- 실제 Vision 경로는 EfficientDet-Lite0 + MediaPipe Tasks CPU이며, LiteRT 어댑터는 동적 출력 버퍼 계약을 실행 전에 검사한다.
+- Vision 경로는 EfficientDet-Lite3을 LiteRT CPU로 우선 시도하고 필요 시 MediaPipe Tasks CPU로 처리하며, LiteRT 어댑터는 동적 출력 버퍼 계약을 실행 전에 검사한다.
 - 한국어 STT는 sherpa-onnx + Moonshine v2를 사용한다. 녹음 후 처리하는 non-streaming 방식이다.
 - [검증 요약](TEST_EVIDENCE.md)은 2026-10-17의 보관된 기록에 근거한다. 문서 분류 작업을 새로운 실기기 검증 결과로 취급하지 않는다.
 - 실제 카메라·마이크·박스 정렬·명령 인식률·폰 성능·GPU/NPU·발열·장시간 안정성은 미검증이다.

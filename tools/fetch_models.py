@@ -31,11 +31,11 @@ def main():
   p.error('Read LICENSES/MOONSHINE-LICENSE.txt; Korean weights use Community License. Then pass --accept-moonshine-license.')
  assets=ROOT/'app/src/main/assets/models';assets.mkdir(parents=True,exist_ok=True)
  byname={x['asset']:x for x in M['files']}
- download(M['vision']['url'],assets/'efficientdet_lite0.tflite',byname['efficientdet_lite0.tflite']['sha256'])
+ download(M['vision']['url'],assets/'efficientdet_lite3.tflite',byname['efficientdet_lite3.tflite']['sha256'])
  # Labels are part of the verified model, not a separately mutable URL.
  import zipfile
  if not (assets/'labels.txt').exists() or digest(assets/'labels.txt')!=byname['labels.txt']['sha256']:
-  with zipfile.ZipFile(assets/'efficientdet_lite0.tflite') as z:(assets/'labels.txt').write_bytes(z.read('labelmap.txt'))
+  with zipfile.ZipFile(assets/'efficientdet_lite3.tflite') as z:(assets/'labels.txt').write_bytes(z.read('labelmap.txt'))
  cache=ROOT/'models/downloads/moonshine-ko.tar.bz2'
  download(M['speech']['url'],cache,M['speech']['archive_sha256'])
  wanted=['encoder_model.ort','decoder_model_merged.ort','tokens.txt','LICENSE']

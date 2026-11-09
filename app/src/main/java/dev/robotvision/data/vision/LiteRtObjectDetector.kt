@@ -15,8 +15,8 @@ class LiteRtObjectDetector(file: File, private val labels: List<String>) : Visio
     private var model: CompiledModel? = null
     private var inputs = emptyList<TensorBuffer>()
     private var outputs = emptyList<TensorBuffer>()
-    private val pixels = IntArray(320 * 320)
-    private val rgb = ByteArray(320 * 320 * 3)
+    private val pixels = IntArray(512 * 512)
+    private val rgb = ByteArray(512 * 512 * 3)
     init {
         try {
             model = CompiledModel.create(file.absolutePath, CompiledModel.Options(Accelerator.CPU), environment)
@@ -29,8 +29,8 @@ class LiteRtObjectDetector(file: File, private val labels: List<String>) : Visio
         } catch (e: Throwable) { close(); throw e }
     }
     override fun detect(bitmap: Bitmap): List<Detection> {
-        val scaled = Bitmap.createScaledBitmap(bitmap, 320, 320, true)
-        try { scaled.getPixels(pixels, 0, 320, 0, 0, 320, 320) }
+        val scaled = Bitmap.createScaledBitmap(bitmap, 512, 512, true)
+        try { scaled.getPixels(pixels, 0, 512, 0, 0, 512, 512) }
         finally { if (scaled !== bitmap) scaled.recycle() }
         pixels.forEachIndexed { i, p ->
             rgb[i * 3] = (p shr 16 and 255).toByte()

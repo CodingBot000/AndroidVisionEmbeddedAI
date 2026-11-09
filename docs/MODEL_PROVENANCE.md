@@ -1,18 +1,14 @@
 # 모델 출처와 재현 계약
 
-확보 일시: 2026-10-17T09:26:40.933774+00:00. 네트워크는 개발 호스트의 취득 단계에만 사용한다. 앱은 번들 파일 및 private copy만 사용하고 INTERNET 권한이 없다.
+Lite3 확보일: 2026-11-09. 음성 모델은 기존 2026-10-17 확보 자산이다. 네트워크는 개발 호스트의 취득 단계에만 사용한다. 앱은 번들 파일 및 private copy만 사용하고 INTERNET 권한이 없다.
 
 ## Vision
 
-- 모델: EfficientDet-Lite0 detection metadata v1, int8 weights / **uint8 input**.
-- [공식 TensorFlow 예제 설치 스크립트](https://github.com/tensorflow/examples/blob/master/lite/examples/object_detection/raspberry_pi/setup.sh)가 지정하는 [정확한 모델 파일](https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite).
-- [EfficientDet upstream](https://github.com/google/automl/tree/master/efficientdet), Apache-2.0 원문을 LICENSES에 보존.
-- 입력 [1,320,320,3] NHWC RGB uint8, quantization scale=1/128, zero point=127. RGB 0..255 bytes를 그대로 입력하며 float 정규화를 중복 적용하지 않는다.
-- **호스트 allocate_tensors 및 invoke로 확인한 출력 순서:** boxes [1,25,4] (ymin,xmin,ymax,xmax), classes [1,25], scores [1,25], count [1], 전부 float32.
-- graph 안에 TFLite_Detection_PostProcess/NMS가 있으므로 별도 NMS를 하지 않는다. FlatBuffer에는 출력 형상이 동적으로 비어 있어 직접 CompiledModel 출력 할당과 충돌 가능.
-- labels.txt는 이 모델 ZIP의 labelmap.txt를 byte-for-byte 추출. 90 index 슬롯 중 80 유효 COCO 클래스. cup=46, bottle=43, person=0, chair=61, laptop=72, keyboard=75, cell phone=76, book=83. ??? 슬롯은 제외.
-- 최초 Google MediaPipe int8 v1 후보 파일은 실제 검사 결과 [1,19206,90], [1,19206,4] raw output 2개였다. 후처리를 가정하지 않고 4개 출력의 공식 task-library 배포물로 선택을 변경했다. 이 후보는 APK에서 제외했다.
-- Android는 LiteRT **2.3.0 CompiledModel CPU**를 먼저 생성하고, native 추론 **전에** 입력/출력 버퍼 크기를 검사한다. 기대값은 307200 bytes / [100,25,25,1] float elements이다. 충분한 용량일 때만 warm-up을 호출한다. 동적 scalar 출력에 warm-up을 쓰면 native heap corruption이 발생하는 것을 앱 부팅 테스트에서 확인하여 이 검사를 추가했다. 출력 계약 실패 시 실제 **MediaPipe Tasks Vision 0.10.32 ObjectDetector CPU**를 사용하며 화면에 이유를 노출한다. 에뮬레이터에서 실제 이 fallback 경로로 native detect 호출을 검증했다. 정확한 최종 로그는 TEST_EVIDENCE 참조.
+- 모델: **EfficientDet-Lite3 detection metadata v1**, [TensorFlow Hub 원본](https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3/detection/metadata/1?lite-format=tflite), Google AutoML Apache-2.0. 모델 SHA-256은 아래 표와 manifest에 고정한다.
+- TensorFlow Lite 호스트 Interpreter로 확인한 입력은 `[1,512,512,3]` NHWC RGB uint8, quantization scale 1/128, zero point 127이다. 출력은 boxes `[1,25,4]`, classes `[1,25]`, scores `[1,25]`, count `[1]`의 float32 순서이며 graph 안에서 NMS를 수행한다.
+- 동봉된 labelmap은 기존 파일과 SHA-256이 같고 90개 슬롯이다. 정확한 target/class 매핑은 manifest와 `verify_models.py`에서 확인한다.
+- Android LiteRT CompiledModel CPU는 실행 전 입력 786432 bytes와 출력 `[100,25,25,1]` 요소 용량을 검사한다. 불충분한 동적 버퍼에는 native run을 호출하지 않고 MediaPipe Tasks CPU로 전환한다. ARM64 API 36 에뮬레이터에서 Lite3도 출력이 `[1,1,1,1]`로 할당되어 MediaPipe CPU fallback과 실제 black-image 추론을 확인했다. 실기기 성능·인식률은 미검증이다.
+- Lite0의 동적 출력 버퍼 때문에 native heap corruption이 발생했던 이력은 `TEST_EVIDENCE.md`에 보존한다. 과거 Lite0 검증을 Lite3 검증으로 간주하지 않는다.
 
 ## 한국어 STT
 
@@ -39,7 +35,7 @@ python3 tools/verify_models.py
 |---|---:|---|
 | LICENSE | 13344 | `6148d7574a6554b7379b633cfd4c4fe5840c3f548d13bc83e00b52dc6fa00abd` |
 | decoder_model_merged.ort | 58327336 | `95aa9f2e764b80625d2889d6ec9f05c965808e540ac50c16abd10c7ea33fe44b` |
-| efficientdet_lite0.tflite | 4563519 | `2e04c53bfeac0ac2a30c057c7e2a777594ce39baaac35a92f74fb1e8c4fc4e0b` |
+| efficientdet_lite3.tflite | 11953887 | `b17218c2d9ca9d513378fff862f15af907276af309e6b141d564afe96b6c712c` |
 | encoder_model.ort | 13238176 | `947260d46252f48eada86a34986b3f70c01d68a343959949a77375b94debd055` |
 | labels.txt | 661 | `f8803ef7900160c629d570848dfda4175e21667bf7b71f73f8ece4938c9f2bf2` |
 | tokens.txt | 549350 | `2870d843e14c1e187bf1913a521562a63b53933814bd7f2145120468f494a049` |

@@ -2,15 +2,15 @@
   "schema_version": 1,
   "retrieved_at": "2026-10-17T09:26:40.933774+00:00",
   "vision": {
-    "id": "efficientdet-lite0-detection-metadata-1",
-    "url": "https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite",
-    "source": "https://github.com/tensorflow/examples/blob/master/lite/examples/object_detection/raspberry_pi/setup.sh",
+    "id": "efficientdet-lite3-detection-metadata-1",
+    "url": "https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3/detection/metadata/1?lite-format=tflite",
+    "source": "https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3/detection/metadata/1",
     "license": "Apache-2.0 (TensorFlow EfficientDet upstream)",
     "input": {
       "shape": [
         1,
-        320,
-        320,
+        512,
+        512,
         3
       ],
       "dtype": "uint8",
@@ -70,10 +70,10 @@
       "sha256": "95aa9f2e764b80625d2889d6ec9f05c965808e540ac50c16abd10c7ea33fe44b"
     },
     {
-      "path": "app/src/main/assets/models/efficientdet_lite0.tflite",
-      "asset": "efficientdet_lite0.tflite",
-      "size": 4563519,
-      "sha256": "2e04c53bfeac0ac2a30c057c7e2a777594ce39baaac35a92f74fb1e8c4fc4e0b"
+      "path": "app/src/main/assets/models/efficientdet_lite3.tflite",
+      "asset": "efficientdet_lite3.tflite",
+      "size": 11953887,
+      "sha256": "b17218c2d9ca9d513378fff862f15af907276af309e6b141d564afe96b6c712c"
     },
     {
       "path": "app/src/main/assets/models/encoder_model.ort",

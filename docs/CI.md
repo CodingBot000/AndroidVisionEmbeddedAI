@@ -20,7 +20,7 @@ Ubuntu 24.04의 새 작업 디렉터리에서 Temurin JDK 21, 프로젝트 Gradl
 
 1. 자산 취득 도구의 Python 회귀 테스트 8개를 실행한다. 모델 동의 없이 전체 취득이 진행되지 않는지, runtime-only 경로가 모델을 요청하지 않는지, 크기·해시·JNI ABI 오류를 거부하는지 확인한다.
 2. manifest에 고정된 **실제 sherpa-onnx 1.13.8 AAR**를 취득하고 크기·SHA-256·arm64-v8a/x86_64 JNI 항목을 검사한다.
-3. 다음 명령으로 Debug APK 빌드·기존 JVM 테스트 55개·Android Lint를 실행한다. 실패한 태스크가 있어도 독립적인 태스크는 계속 시도하며 최종 결과는 실패로 유지한다.
+3. 다음 명령으로 Debug APK 빌드·JVM 단위 테스트·Android Lint를 실행한다. 실패한 태스크가 있어도 독립적인 태스크는 계속 시도하며 최종 결과는 실패로 유지한다.
 
 ```bash
 python3 -m unittest discover -s tools/tests -v

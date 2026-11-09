@@ -15,4 +15,4 @@
 - AGP 8.13.2의 R8이 LiteRT 2.3.0에 포함된 더 새로운 Kotlin metadata를 읽을 때 경고를 출력한다. native/API, Flogger stack introspection 및 protobuf 반사 접근을 보존하는 keep 규칙을 유지한다. 최적화 Release의 실제 엔진 생성 성공은 TEST_EVIDENCE에 기록했다. 경고를 테스트 PASS로 숨기지 않는다.
 - MediaPipe SDK의 전이 transport 의존성이 네트워크 권한을 선언한다. 앱 Manifest의 tools:node=remove로 INTERNET을 제거하여 SDK를 포함한 프로세스의 네트워크 송신을 OS 수준에서 차단한다. ACCESS_NETWORK_STATE는 SDK 내부 상태 확인을 위해 유지되며 데이터 송신 권한이 아니다. 앱은 원격 추론/런타임 모델 다운로드를 호출하지 않는다.
 
-- 선택 EfficientDet의 동적 출력에 대한 LiteRT warm-up은 메모리 손상을 일으킬 수 있어 capacity 검증을 native 실행 앞에 둔다. 이 모델에서는 MediaPipe fallback이 정상 경로이다. 초기 크래시 로그와 보강 후 테스트를 TEST_EVIDENCE에 구분한다.
+- 선택 EfficientDet의 동적 출력에 대한 LiteRT warm-up은 메모리 손상을 일으킬 수 있어 capacity 검증을 native 실행 앞에 둔다. Lite3도 ARM64 API 36 에뮬레이터에서 MediaPipe CPU fallback을 확인했다. 실기기 backend와 성능은 미검증이다. 초기 크래시 로그와 보강 후 테스트를 TEST_EVIDENCE에 구분한다.

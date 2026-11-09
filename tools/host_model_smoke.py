@@ -8,13 +8,13 @@ EVIDENCE=ROOT/'docs/_private/evidence'
 EVIDENCE.mkdir(parents=True,exist_ok=True)
 results={}
 import tensorflow as tf
-interpreter=tf.lite.Interpreter(model_path=str(A/'efficientdet_lite0.tflite'),num_threads=2)
+interpreter=tf.lite.Interpreter(model_path=str(A/'efficientdet_lite3.tflite'),num_threads=2)
 interpreter.allocate_tensors()
 inputs=interpreter.get_input_details();outputs=interpreter.get_output_details()
-assert inputs[0]['shape'].tolist()==[1,320,320,3] and inputs[0]['dtype']==np.uint8
+assert inputs[0]['shape'].tolist()==[1,512,512,3] and inputs[0]['dtype']==np.uint8
 print('VISION TENSOR CONTRACT',[(o['name'],o['shape'].tolist()) for o in outputs])
 assert [o['shape'].tolist() for o in outputs]==[[1,25,4],[1,25],[1,25],[1]]
-interpreter.set_tensor(inputs[0]['index'],np.zeros((1,320,320,3),dtype=np.uint8))
+interpreter.set_tensor(inputs[0]['index'],np.zeros((1,512,512,3),dtype=np.uint8))
 start=time.perf_counter();interpreter.invoke();data=[interpreter.get_tensor(o['index']) for o in outputs]
 assert all(np.all(np.isfinite(x)) for x in data)
 results['vision']={'engine':'TensorFlow Lite host Interpreter (Android uses CompiledModel or MediaPipe)','version':tf.__version__,'input':'black image uint8','outputs':[list(x.shape) for x in data],'inference_ms':(time.perf_counter()-start)*1000,'meaning':'tensor parsing and native inference smoke only; not object accuracy'}

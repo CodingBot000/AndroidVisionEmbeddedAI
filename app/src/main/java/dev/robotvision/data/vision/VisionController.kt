@@ -30,7 +30,7 @@ class VisionController @Inject constructor(
         _state.value = EngineState(loading = true)
         val start = System.nanoTime()
         try {
-            val file = assets.requireFile("efficientdet_lite0.tflite")
+            val file = assets.requireFile("efficientdet_lite3.tflite")
             val labels = assets.requireFile("labels.txt").readLines()
             var fallback: String? = null
             detector = try { LiteRtObjectDetector(file, labels) } catch (e: Exception) {

@@ -4,8 +4,8 @@ package dev.robotvision.domain
 object EfficientDetOutputParser {
     /** Must run before model.run: dynamic scalar output allocations cannot hold detector tensors. */
     fun requireCapacity(inputBytes: Int, outputElements: List<Int>) {
-        require(inputBytes == 320 * 320 * 3 && outputElements == listOf(100, 25, 25, 1)) {
-            "LiteRT buffer capacity incompatible: input=$inputBytes, outputs=$outputElements; expected 307200 / [100,25,25,1]. Native inference skipped before any output write; using MediaPipe CPU."
+        require(inputBytes == 512 * 512 * 3 && outputElements == listOf(100, 25, 25, 1)) {
+            "LiteRT buffer capacity incompatible: input=$inputBytes, outputs=$outputElements; expected 786432 / [100,25,25,1]. Native inference skipped before any output write; using MediaPipe CPU."
         }
     }
 
